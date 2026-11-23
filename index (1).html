@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BPMN Sistem Antrean Rumah Sakit</title>
+<meta name="description" content="Diagram BPMN interaktif Sistem Antrean Rumah Sakit: pendaftaran, antrean, pemeriksaan, dan pelaporan.">
+<meta property="og:title" content="BPMN Sistem Antrean Rumah Sakit">
+<meta property="og:description" content="Diagram proses bisnis interaktif — zoom, geser, dan klik elemen untuk melihat alurnya.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A5%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f4f6f5; --surface:#ffffff; --ink:#14201d; --muted:#5b6b66; --line:#d5dcd9;
+  --accent:#0b6e5f; --accent-ink:#ffffff;
+  --task-bg:#ffffff; --flow:#2b3a36; --pool-line:#14201d;
+  --lane-pas:#dae8fc; --lane-pet:#fff2cc; --lane-dok:#e1d5e7; --lane-sis:#d5e8d4; --lane-dat:#eceeed; --lane-adm:#ffe6cc;
+  --lane-head-alpha:.55; --end:#b3261e; --start:#2e7d32;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1514; --surface:#18211f; --ink:#e6eeeb; --muted:#9aaba5; --line:#2b3835;
+    --accent:#4fd1b8; --accent-ink:#06211c;
+    --task-bg:#1f2a28; --flow:#b9c7c2; --pool-line:#9aaba5;
+    --lane-pas:#1c2b3f; --lane-pet:#3a3320; --lane-dok:#2f2538; --lane-sis:#1f3322; --lane-dat:#242b29; --lane-adm:#3b2c1c;
+    --end:#ff8a80; --start:#7ddc82;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);overflow:hidden}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:1.05rem;font-weight:600;margin:0;letter-spacing:.005em}
+header .sub{color:var(--muted);font-size:.82rem}
+.spacer{flex:1}
+.btn{font:inherit;font-size:.85rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;
+  padding:6px 11px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;line-height:1.2}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,.node:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn[hidden]{display:none}
+main{flex:1;display:flex;min-height:0;position:relative}
+#stage{flex:1;position:relative;min-width:0;touch-action:none;cursor:grab;
+  background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+#stage.drag{cursor:grabbing}
+svg#bpmn{width:100%;height:100%;display:block;user-select:none;-webkit-user-select:none}
+.zoom{position:absolute;left:14px;bottom:14px;display:flex;flex-direction:column;gap:6px}
+.zoom .btn{width:38px;height:38px;justify-content:center;font-size:1.1rem;padding:0}
+.zoom .fit{font-size:.7rem}
+.hint{position:absolute;left:62px;bottom:20px;font-size:.78rem;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+  padding:4px 10px;border-radius:999px;pointer-events:none}
+aside{width:340px;max-width:42vw;background:var(--surface);border-left:1px solid var(--line);padding:18px 18px 24px;overflow:auto;font-size:.9rem;line-height:1.5}
+aside h2{font-size:1rem;margin:0 0 4px;font-weight:600}
+aside .kind{font-size:.78rem;color:var(--muted);margin:0 0 12px}
+aside h3{font-size:.8rem;font-weight:600;color:var(--muted);margin:18px 0 6px}
+aside .lane-tag{display:inline-block;padding:2px 9px;border-radius:999px;border:1px solid var(--line);font-size:.8rem}
+aside ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+aside li button{width:100%;text-align:left;font:inherit;font-size:.86rem;color:var(--ink);background:transparent;border:1px solid var(--line);
+  border-radius:8px;padding:7px 10px;cursor:pointer}
+aside li button:hover{border-color:var(--accent);background:rgba(11,110,95,.10)}
+.chip{font-family:var(--mono);font-size:.72rem;color:var(--accent);margin-right:6px}
+.legend{display:grid;grid-template-columns:34px 1fr;gap:8px 10px;align-items:center;margin-top:6px}
+.legend svg{width:34px;height:24px;overflow:visible}
+.lanes-list{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.lanes-list span{display:flex;align-items:center;gap:8px}
+.lanes-list i{width:14px;height:14px;border-radius:4px;border:1px solid var(--line);display:inline-block}
+.clear{margin-top:16px}
+footer{padding:7px 16px;font-size:.76rem;color:var(--muted);background:var(--surface);border-top:1px solid var(--line);display:flex;gap:14px;flex-wrap:wrap}
+footer a{color:var(--accent)}
+
+/* ---------- SVG ---------- */
+svg text{font-family:var(--font);fill:var(--ink)}
+.pool{fill:var(--surface);stroke:var(--pool-line);stroke-width:1.5}
+.pool-head{fill:var(--surface);stroke:var(--pool-line);stroke-width:1.5}
+.pool-title{font-size:13px;font-weight:600}
+.lane-bg{stroke:var(--pool-line);stroke-width:1}
+.lane-head{stroke:var(--pool-line);stroke-width:1;fill-opacity:var(--lane-head-alpha)}
+.lane-title{font-size:12px;font-weight:600}
+.lane-pas .lane-bg,.lane-pas .lane-head{fill:var(--lane-pas)}
+.lane-pet .lane-bg,.lane-pet .lane-head{fill:var(--lane-pet)}
+.lane-dok .lane-bg,.lane-dok .lane-head{fill:var(--lane-dok)}
+.lane-sis .lane-bg,.lane-sis .lane-head{fill:var(--lane-sis)}
+.lane-dat .lane-bg,.lane-dat .lane-head{fill:var(--lane-dat)}
+.lane-adm .lane-bg,.lane-adm .lane-head{fill:var(--lane-adm)}
+.lane-bg{fill-opacity:.42}
+.edge{fill:none;stroke:var(--flow);stroke-width:1.6;transition:opacity .15s}
+.edge.assoc{stroke-dasharray:5 4;stroke-width:1.3}
+.arrowhead{fill:var(--flow)} .arrowopen{fill:none;stroke:var(--flow);stroke-width:1.4}
+.hit{display:none}
+.node{cursor:pointer;transition:opacity .15s}
+.node text{font-size:11.5px;pointer-events:none}
+.node.task rect{fill:var(--task-bg);stroke:var(--accent);stroke-width:1.6}
+.node.task:hover rect,.node.sel rect{stroke-width:3}
+.ev-start circle{fill:var(--task-bg);stroke:var(--start);stroke-width:2}
+.ev-end circle{fill:var(--task-bg);stroke:var(--end);stroke-width:4}
+.node.event:hover circle,.node.sel circle{filter:drop-shadow(0 0 4px currentColor)}
+.node.gw polygon{fill:var(--task-bg);stroke:var(--flow);stroke-width:1.6}
+.node.gw .x{stroke:var(--flow);stroke-width:2.4;fill:none}
+.node.gw:hover polygon,.node.sel polygon{stroke-width:3}
+.node.ds path{fill:var(--task-bg);stroke:var(--flow);stroke-width:1.5}
+.node.ds .rim{fill:none}
+.node.ds:hover path,.node.sel path{stroke-width:2.6}
+.node text.outside{font-size:11px;font-weight:500}
+.elabel rect{fill:var(--surface);stroke:var(--line)}
+.elabel text{font-size:10.5px;font-weight:600}
+.elabel.assoc-l text{font-weight:400;font-style:italic;fill:var(--muted)}
+svg.focus .node:not(.on){opacity:.28}
+svg.focus .edge:not(.on){opacity:.1}
+svg.focus .elabel{opacity:.35}
+svg.focus .edge.on{stroke-width:2.6}
+
+@media (max-width:760px){
+  main{flex-direction:column}
+  aside{width:100%;max-width:none;flex:0 0 auto;max-height:36%;border-left:0;border-top:1px solid var(--line);padding:14px 16px 18px}
+  #stage{min-height:0}
+  .zoom{bottom:auto;top:12px}
+  .hint{display:none}
+  header .sub{display:none}
+  header{padding:8px 12px}
+  header h1{font-size:.95rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>BPMN Sistem Antrean Rumah Sakit</h1>
+    <div class="sub">Pendaftaran → antrean → pemeriksaan → pelaporan</div>
+  </div>
+  <div class="spacer"></div>
+  <a class="btn" id="btnDrawio" href="BPMN_Sella.drawio" download>Unduh .drawio</a>
+  <a class="btn" id="btnEdit" href="#" target="_blank" rel="noopener" hidden>Edit di draw.io</a>
+  <a class="btn primary" id="btnGit" href="#" target="_blank" rel="noopener" hidden>Lihat di GitHub</a>
+</header>
+
+<main>
+  <div id="stage">
+    <svg id="bpmn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2720 820" role="img" aria-label="Diagram BPMN Sistem Antrean Rumah Sakit"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker><marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9" class="arrowopen"/></marker></defs>
+<rect class="pool" x="40.0" y="40.0" width="2640.0" height="760.0" rx="4"/>
+<g class="lane lane-pas"><rect class="lane-bg" x="70.0" y="40.0" width="2610.0" height="130.0"/><rect class="lane-head" x="70.0" y="40.0" width="30" height="130.0"/><text class="lane-title" transform="translate(85.0,105.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Pasien</text></g>
+<g class="lane lane-pet"><rect class="lane-bg" x="70.0" y="170.0" width="2610.0" height="130.0"/><rect class="lane-head" x="70.0" y="170.0" width="30" height="130.0"/><text class="lane-title" transform="translate(85.0,235.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Petugas Pendaftaran</text></g>
+<g class="lane lane-dok"><rect class="lane-bg" x="70.0" y="300.0" width="2610.0" height="130.0"/><rect class="lane-head" x="70.0" y="300.0" width="30" height="130.0"/><text class="lane-title" transform="translate(85.0,365.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Dokter / Perawat</text></g>
+<g class="lane lane-sis"><rect class="lane-bg" x="70.0" y="430.0" width="2610.0" height="130.0"/><rect class="lane-head" x="70.0" y="430.0" width="30" height="130.0"/><text class="lane-title" transform="translate(85.0,495.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Sistem Antrean RS</text></g>
+<g class="lane lane-dat"><rect class="lane-bg" x="70.0" y="560.0" width="2610.0" height="110.0"/><rect class="lane-head" x="70.0" y="560.0" width="30" height="110.0"/><text class="lane-title" transform="translate(85.0,615.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Penyimpanan Data</text></g>
+<g class="lane lane-adm"><rect class="lane-bg" x="70.0" y="670.0" width="2610.0" height="130.0"/><rect class="lane-head" x="70.0" y="670.0" width="30" height="130.0"/><text class="lane-title" transform="translate(85.0,735.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Admin Sistem</text></g>
+<rect class="pool-head" x="40.0" y="40.0" width="30" height="760.0" rx="4"/>
+<text class="pool-title" transform="translate(55.0,420.0) rotate(-90)" text-anchor="middle" dominant-baseline="central">Sistem Antrean Rumah Sakit</text>
+<path class="edge flow" data-id="f1" data-s="s1" data-t="t1" d="M188.0,105.0 L260.0,105.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f2" data-s="t1" data-t="t2" d="M380.0,105.0 L395.0,105.0 L395.0,235.0 L410.0,235.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f3" data-s="t2" data-t="g1" d="M530.0,235.0 L595.0,235.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f4" data-s="g1" data-t="t3" d="M620.0,210.0 L620.0,137.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f5" data-s="t3" data-t="t2" d="M560.0,105.0 L470.0,105.0 L470.0,203.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f6" data-s="g1" data-t="t4" d="M645.0,235.0 L677.5,235.0 L677.5,495.0 L710.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f7" data-s="t4" data-t="t5" d="M830.0,495.0 L845.0,495.0 L845.0,105.0 L860.0,105.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f8" data-s="t5" data-t="t6" d="M980.0,105.0 L995.0,105.0 L995.0,495.0 L1010.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f9" data-s="t6" data-t="g2" d="M1130.0,495.0 L1195.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f10" data-s="g2" data-t="t5" d="M1220.0,470.0 L1220.0,155.0 L920.0,155.0 L920.0,137.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f11" data-s="g2" data-t="t7" d="M1245.0,495.0 L1310.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f12" data-s="t7" data-t="t8" d="M1430.0,495.0 L1445.0,495.0 L1445.0,105.0 L1460.0,105.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f13" data-s="t8" data-t="t9" d="M1580.0,105.0 L1595.0,105.0 L1595.0,365.0 L1610.0,365.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f14" data-s="t9" data-t="t10" d="M1730.0,365.0 L1745.0,365.0 L1745.0,495.0 L1760.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f15" data-s="t10" data-t="t11" d="M1880.0,495.0 L1895.0,495.0 L1895.0,105.0 L1910.0,105.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f16" data-s="t11" data-t="t12" d="M2030.0,105.0 L2045.0,105.0 L2045.0,365.0 L2060.0,365.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f17" data-s="t12" data-t="t13" d="M2180.0,365.0 L2210.0,365.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f18" data-s="t13" data-t="t14" d="M2330.0,365.0 L2345.0,365.0 L2345.0,495.0 L2360.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f19" data-s="t14" data-t="e1" d="M2480.0,495.0 L2552.0,495.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f20" data-s="s2" data-t="t15" d="M938.0,735.0 L1010.0,735.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f21" data-s="t15" data-t="e2" d="M1130.0,735.0 L1202.0,735.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f22" data-s="s3" data-t="t16" d="M2288.0,735.0 L2360.0,735.0" marker-end="url(#arrow)"/>
+<path class="edge flow" data-id="f23" data-s="t16" data-t="e3" d="M2480.0,735.0 L2552.0,735.0" marker-end="url(#arrow)"/>
+<path class="edge assoc" data-id="a1" data-s="t4" data-t="d1" d="M770.0,527.0 L770.0,587.0" marker-end="url(#arrow-open)"/>
+<path class="edge assoc" data-id="a2" data-s="d3" data-t="t6" d="M1070.0,587.0 L1070.0,527.0" marker-end="url(#arrow-open)"/>
+<path class="edge assoc" data-id="a3" data-s="t7" data-t="d2" d="M1370.0,527.0 L1370.0,615.0 L1535.0,615.0" marker-end="url(#arrow-open)"/>
+<path class="edge assoc" data-id="a4" data-s="d2" data-t="t10" d="M1655.0,615.0 L1820.0,615.0 L1820.0,527.0" marker-end="url(#arrow-open)"/>
+<path class="edge assoc" data-id="a5" data-s="t14" data-t="d4" d="M2420.0,527.0 L2420.0,587.0" marker-end="url(#arrow-open)"/>
+<path class="edge assoc" data-id="a6" data-s="d4" data-t="t16" d="M2420.0,643.0 L2420.0,703.0" marker-end="url(#arrow-open)"/>
+<path class="edge assoc" data-id="a7" data-s="t15" data-t="d3" d="M1070.0,703.0 L1070.0,643.0" marker-end="url(#arrow-open)"/>
+<g class="node event ev-start" data-id="s1" tabindex="0" role="button" aria-label="Pasien datang ke RS"><circle cx="170.0" cy="105.0" r="18.0"/><text class="outside" x="170.0" y="137.0" text-anchor="middle"><tspan x="170.0" dy="0">Pasien datang ke</tspan><tspan x="170.0" dy="13">RS</tspan></text></g>
+<g class="node task" data-id="t1" tabindex="0" role="button" aria-label="Mengisi data diri pendaftaran"><rect x="260.0" y="73.0" width="120.0" height="64.0" rx="8" style="--accent:#6c8ebf"/><text x="320.0" y="98.0" text-anchor="middle" dominant-baseline="central"><tspan x="320.0" dy="0">Mengisi data diri</tspan><tspan x="320.0" dy="14">pendaftaran</tspan></text></g>
+<g class="node task" data-id="t2" tabindex="0" role="button" aria-label="Verifikasi data pasien"><rect x="410.0" y="203.0" width="120.0" height="64.0" rx="8" style="--accent:#d6b656"/><text x="470.0" y="228.0" text-anchor="middle" dominant-baseline="central"><tspan x="470.0" dy="0">Verifikasi data</tspan><tspan x="470.0" dy="14">pasien</tspan></text></g>
+<g class="node gw" data-id="g1" tabindex="0" role="button" aria-label="Data valid?"><polygon points="620.0,210.0 645.0,235.0 620.0,260.0 595.0,235.0"/><path class="x" d="M611.0,226.0 L629.0,244.0 M629.0,226.0 L611.0,244.0"/><text class="outside" x="620.0" y="274.0" text-anchor="middle">Data valid?</text></g>
+<g class="node task" data-id="t3" tabindex="0" role="button" aria-label="Melengkapi / memperbaiki data"><rect x="560.0" y="73.0" width="120.0" height="64.0" rx="8" style="--accent:#6c8ebf"/><text x="620.0" y="98.0" text-anchor="middle" dominant-baseline="central"><tspan x="620.0" dy="0">Melengkapi /</tspan><tspan x="620.0" dy="14">memperbaiki data</tspan></text></g>
+<g class="node task" data-id="t4" tabindex="0" role="button" aria-label="Simpan data pasien &amp; terbitkan No. Rekam Medis"><rect x="710.0" y="463.0" width="120.0" height="64.0" rx="8" style="--accent:#82b366"/><text x="770.0" y="481.0" text-anchor="middle" dominant-baseline="central"><tspan x="770.0" dy="0">Simpan data pasien &amp;</tspan><tspan x="770.0" dy="14">terbitkan No. Rekam</tspan><tspan x="770.0" dy="14">Medis</tspan></text></g>
+<g class="node task" data-id="t5" tabindex="0" role="button" aria-label="Memilih poli tujuan"><rect x="860.0" y="73.0" width="120.0" height="64.0" rx="8" style="--accent:#6c8ebf"/><text x="920.0" y="105.0" text-anchor="middle" dominant-baseline="central"><tspan x="920.0" dy="0">Memilih poli tujuan</tspan></text></g>
+<g class="node task" data-id="t6" tabindex="0" role="button" aria-label="Cek jadwal &amp; kuota dokter"><rect x="1010.0" y="463.0" width="120.0" height="64.0" rx="8" style="--accent:#82b366"/><text x="1070.0" y="488.0" text-anchor="middle" dominant-baseline="central"><tspan x="1070.0" dy="0">Cek jadwal &amp; kuota</tspan><tspan x="1070.0" dy="14">dokter</tspan></text></g>
+<g class="node gw" data-id="g2" tabindex="0" role="button" aria-label="Kuota tersedia?"><polygon points="1220.0,470.0 1245.0,495.0 1220.0,520.0 1195.0,495.0"/><path class="x" d="M1211.0,486.0 L1229.0,504.0 M1229.0,486.0 L1211.0,504.0"/><text class="outside" x="1220.0" y="534.0" text-anchor="middle">Kuota tersedia?</text></g>
+<g class="node task" data-id="t7" tabindex="0" role="button" aria-label="Buat nomor antrean"><rect x="1310.0" y="463.0" width="120.0" height="64.0" rx="8" style="--accent:#82b366"/><text x="1370.0" y="495.0" text-anchor="middle" dominant-baseline="central"><tspan x="1370.0" dy="0">Buat nomor antrean</tspan></text></g>
+<g class="node task" data-id="t8" tabindex="0" role="button" aria-label="Terima tiket nomor antrean &amp; menunggu"><rect x="1460.0" y="73.0" width="120.0" height="64.0" rx="8" style="--accent:#6c8ebf"/><text x="1520.0" y="98.0" text-anchor="middle" dominant-baseline="central"><tspan x="1520.0" dy="0">Terima tiket nomor</tspan><tspan x="1520.0" dy="14">antrean &amp; menunggu</tspan></text></g>
+<g class="node task" data-id="t9" tabindex="0" role="button" aria-label="Memberi perintah panggil pasien"><rect x="1610.0" y="333.0" width="120.0" height="64.0" rx="8" style="--accent:#9673a6"/><text x="1670.0" y="358.0" text-anchor="middle" dominant-baseline="central"><tspan x="1670.0" dy="0">Memberi perintah</tspan><tspan x="1670.0" dy="14">panggil pasien</tspan></text></g>
+<g class="node task" data-id="t10" tabindex="0" role="button" aria-label="Update status antrean, kirim notifikasi &amp; tampilkan monitor"><rect x="1760.0" y="463.0" width="120.0" height="64.0" rx="8" style="--accent:#82b366"/><text x="1820.0" y="474.0" text-anchor="middle" dominant-baseline="central"><tspan x="1820.0" dy="0">Update status</tspan><tspan x="1820.0" dy="14">antrean, kirim</tspan><tspan x="1820.0" dy="14">notifikasi &amp;</tspan><tspan x="1820.0" dy="14">tampilkan monitor</tspan></text></g>
+<g class="node task" data-id="t11" tabindex="0" role="button" aria-label="Menuju ruang periksa"><rect x="1910.0" y="73.0" width="120.0" height="64.0" rx="8" style="--accent:#6c8ebf"/><text x="1970.0" y="105.0" text-anchor="middle" dominant-baseline="central"><tspan x="1970.0" dy="0">Menuju ruang periksa</tspan></text></g>
+<g class="node task" data-id="t12" tabindex="0" role="button" aria-label="Melakukan pemeriksaan"><rect x="2060.0" y="333.0" width="120.0" height="64.0" rx="8" style="--accent:#9673a6"/><text x="2120.0" y="358.0" text-anchor="middle" dominant-baseline="central"><tspan x="2120.0" dy="0">Melakukan</tspan><tspan x="2120.0" dy="14">pemeriksaan</tspan></text></g>
+<g class="node task" data-id="t13" tabindex="0" role="button" aria-label="Input hasil pemeriksaan"><rect x="2210.0" y="333.0" width="120.0" height="64.0" rx="8" style="--accent:#9673a6"/><text x="2270.0" y="358.0" text-anchor="middle" dominant-baseline="central"><tspan x="2270.0" dy="0">Input hasil</tspan><tspan x="2270.0" dy="14">pemeriksaan</tspan></text></g>
+<g class="node task" data-id="t14" tabindex="0" role="button" aria-label="Simpan catatan kunjungan"><rect x="2360.0" y="463.0" width="120.0" height="64.0" rx="8" style="--accent:#82b366"/><text x="2420.0" y="488.0" text-anchor="middle" dominant-baseline="central"><tspan x="2420.0" dy="0">Simpan catatan</tspan><tspan x="2420.0" dy="14">kunjungan</tspan></text></g>
+<g class="node event ev-end" data-id="e1" tabindex="0" role="button" aria-label="Pemeriksaan selesai"><circle cx="2570.0" cy="495.0" r="18.0"/><text class="outside" x="2570.0" y="527.0" text-anchor="middle"><tspan x="2570.0" dy="0">Pemeriksaan</tspan><tspan x="2570.0" dy="13">selesai</tspan></text></g>
+<g class="node event ev-start" data-id="s2" tabindex="0" role="button" aria-label="Ada perubahan data master"><circle cx="920.0" cy="735.0" r="18.0"/><text class="outside" x="920.0" y="767.0" text-anchor="middle"><tspan x="920.0" dy="0">Ada perubahan data</tspan><tspan x="920.0" dy="13">master</tspan></text></g>
+<g class="node task" data-id="t15" tabindex="0" role="button" aria-label="Kelola data master (poli, dokter, jadwal)"><rect x="1010.0" y="703.0" width="120.0" height="64.0" rx="8" style="--accent:#d79b00"/><text x="1070.0" y="721.0" text-anchor="middle" dominant-baseline="central"><tspan x="1070.0" dy="0">Kelola data master</tspan><tspan x="1070.0" dy="14">(poli, dokter,</tspan><tspan x="1070.0" dy="14">jadwal)</tspan></text></g>
+<g class="node event ev-end" data-id="e2" tabindex="0" role="button" aria-label="Data master tersimpan"><circle cx="1220.0" cy="735.0" r="18.0"/><text class="outside" x="1220.0" y="767.0" text-anchor="middle"><tspan x="1220.0" dy="0">Data master</tspan><tspan x="1220.0" dy="13">tersimpan</tspan></text></g>
+<g class="node event ev-start" data-id="s3" tabindex="0" role="button" aria-label="Butuh laporan"><circle cx="2270.0" cy="735.0" r="18.0"/><text class="outside" x="2270.0" y="767.0" text-anchor="middle"><tspan x="2270.0" dy="0">Butuh laporan</tspan></text></g>
+<g class="node task" data-id="t16" tabindex="0" role="button" aria-label="Lihat laporan antrean &amp; kunjungan"><rect x="2360.0" y="703.0" width="120.0" height="64.0" rx="8" style="--accent:#d79b00"/><text x="2420.0" y="728.0" text-anchor="middle" dominant-baseline="central"><tspan x="2420.0" dy="0">Lihat laporan</tspan><tspan x="2420.0" dy="14">antrean &amp; kunjungan</tspan></text></g>
+<g class="node event ev-end" data-id="e3" tabindex="0" role="button" aria-label="Laporan diterima"><circle cx="2570.0" cy="735.0" r="18.0"/><text class="outside" x="2570.0" y="767.0" text-anchor="middle"><tspan x="2570.0" dy="0">Laporan diterima</tspan></text></g>
+<g class="node ds" data-id="d1" tabindex="0" role="button" aria-label="D1 Data Pasien"><path d="M710.0,595.0 a60.0,8 0 0 1 120.0,0 v40.0 a60.0,8 0 0 1 -120.0,0 z"/><path class="rim" d="M710.0,595.0 a60.0,8 0 0 0 120.0,0"/><text x="770.0" y="619.0" text-anchor="middle" dominant-baseline="central"><tspan x="770.0" dy="0">D1 Data Pasien</tspan></text></g>
+<g class="node ds" data-id="d3" tabindex="0" role="button" aria-label="D3 Data Poli, Dokter &amp; Jadwal"><path d="M1010.0,595.0 a60.0,8 0 0 1 120.0,0 v40.0 a60.0,8 0 0 1 -120.0,0 z"/><path class="rim" d="M1010.0,595.0 a60.0,8 0 0 0 120.0,0"/><text x="1070.0" y="613.0" text-anchor="middle" dominant-baseline="central"><tspan x="1070.0" dy="0">D3 Data Poli,</tspan><tspan x="1070.0" dy="13">Dokter &amp; Jadwal</tspan></text></g>
+<g class="node ds" data-id="d2" tabindex="0" role="button" aria-label="D2 Data Antrean"><path d="M1535.0,595.0 a60.0,8 0 0 1 120.0,0 v40.0 a60.0,8 0 0 1 -120.0,0 z"/><path class="rim" d="M1535.0,595.0 a60.0,8 0 0 0 120.0,0"/><text x="1595.0" y="619.0" text-anchor="middle" dominant-baseline="central"><tspan x="1595.0" dy="0">D2 Data Antrean</tspan></text></g>
+<g class="node ds" data-id="d4" tabindex="0" role="button" aria-label="D4 Data Kunjungan"><path d="M2360.0,595.0 a60.0,8 0 0 1 120.0,0 v40.0 a60.0,8 0 0 1 -120.0,0 z"/><path class="rim" d="M2360.0,595.0 a60.0,8 0 0 0 120.0,0"/><text x="2420.0" y="619.0" text-anchor="middle" dominant-baseline="central"><tspan x="2420.0" dy="0">D4 Data Kunjungan</tspan></text></g>
+<g class="elabel"><rect x="613.0" y="176.0" width="42.0" height="16" rx="3"/><text x="634.0" y="184.0" text-anchor="middle" dominant-baseline="central">Tidak</text></g>
+<g class="elabel"><rect x="659.6" y="217.0" width="22.8" height="16" rx="3"/><text x="671.0" y="225.0" text-anchor="middle" dominant-baseline="central">Ya</text></g>
+<g class="elabel"><rect x="1213.0" y="436.0" width="42.0" height="16" rx="3"/><text x="1234.0" y="444.0" text-anchor="middle" dominant-baseline="central">Tidak</text></g>
+<g class="elabel"><rect x="1259.6" y="477.0" width="22.8" height="16" rx="3"/><text x="1271.0" y="485.0" text-anchor="middle" dominant-baseline="central">Ya</text></g>
+<g class="elabel assoc-l"><rect x="749.0" y="549.0" width="42.0" height="16" rx="3"/><text x="770.0" y="557.0" text-anchor="middle" dominant-baseline="central">tulis</text></g>
+<g class="elabel assoc-l"><rect x="1052.2" y="549.0" width="35.6" height="16" rx="3"/><text x="1070.0" y="557.0" text-anchor="middle" dominant-baseline="central">baca</text></g>
+<g class="elabel assoc-l"><rect x="1431.5" y="607.0" width="42.0" height="16" rx="3"/><text x="1452.5" y="615.0" text-anchor="middle" dominant-baseline="central">tulis</text></g>
+<g class="elabel assoc-l"><rect x="1690.9" y="607.0" width="93.2" height="16" rx="3"/><text x="1737.5" y="615.0" text-anchor="middle" dominant-baseline="central">baca &amp; update</text></g>
+<g class="elabel assoc-l"><rect x="2399.0" y="549.0" width="42.0" height="16" rx="3"/><text x="2420.0" y="557.0" text-anchor="middle" dominant-baseline="central">tulis</text></g>
+<g class="elabel assoc-l"><rect x="2402.2" y="665.0" width="35.6" height="16" rx="3"/><text x="2420.0" y="673.0" text-anchor="middle" dominant-baseline="central">baca</text></g>
+<g class="elabel assoc-l"><rect x="1049.0" y="665.0" width="42.0" height="16" rx="3"/><text x="1070.0" y="673.0" text-anchor="middle" dominant-baseline="central">tulis</text></g></svg>
+    <div class="zoom" role="group" aria-label="Kontrol zoom">
+      <button class="btn" id="zin" aria-label="Perbesar">+</button>
+      <button class="btn" id="zout" aria-label="Perkecil">−</button>
+      <button class="btn fit" id="zfit" aria-label="Tampilkan seluruh diagram">Fit</button>
+    </div>
+    <div class="hint">Geser untuk menjelajah · scroll / cubit untuk zoom · klik elemen untuk detail</div>
+  </div>
+  <aside id="panel" aria-live="polite"></aside>
+</main>
+
+<footer>
+  <span>Dibuat dari <code>BPMN_Sella.drawio</code></span>
+  <span id="repoInfo"></span>
+</footer>
+
+<script>
+/* ====== Konfigurasi (opsional) ======
+   Jika situs ini dibuka lewat GitHub Pages (username.github.io/nama-repo),
+   alamat repo terdeteksi otomatis. Untuk domain lain, isi manual di sini.   */
+const GITHUB_REPO   = "";      // contoh: "sella/bpmn-antrean-rs"
+const GITHUB_BRANCH = "main";
+const DRAWIO_FILE   = "BPMN_Sella.drawio";
+
+const DATA = {"nodes": {"s1": {"name": "Pasien datang ke RS", "kind": "start", "lane": "Pasien", "ins": [], "outs": [{"id": "t1", "name": "Mengisi data diri pendaftaran", "label": ""}]}, "t1": {"name": "Mengisi data diri pendaftaran", "kind": "task", "lane": "Pasien", "ins": [{"id": "s1", "name": "Pasien datang ke RS", "label": ""}], "outs": [{"id": "t2", "name": "Verifikasi data pasien", "label": ""}]}, "t2": {"name": "Verifikasi data pasien", "kind": "task", "lane": "Petugas Pendaftaran", "ins": [{"id": "t1", "name": "Mengisi data diri pendaftaran", "label": ""}, {"id": "t3", "name": "Melengkapi / memperbaiki data", "label": ""}], "outs": [{"id": "g1", "name": "Data valid?", "label": ""}]}, "g1": {"name": "Data valid?", "kind": "gw", "lane": "Petugas Pendaftaran", "ins": [{"id": "t2", "name": "Verifikasi data pasien", "label": ""}], "outs": [{"id": "t3", "name": "Melengkapi / memperbaiki data", "label": "Tidak"}, {"id": "t4", "name": "Simpan data pasien & terbitkan No. Rekam Medis", "label": "Ya"}]}, "t3": {"name": "Melengkapi / memperbaiki data", "kind": "task", "lane": "Pasien", "ins": [{"id": "g1", "name": "Data valid?", "label": "Tidak"}], "outs": [{"id": "t2", "name": "Verifikasi data pasien", "label": ""}]}, "t4": {"name": "Simpan data pasien & terbitkan No. Rekam Medis", "kind": "task", "lane": "Sistem Antrean RS", "ins": [{"id": "g1", "name": "Data valid?", "label": "Ya"}], "outs": [{"id": "t5", "name": "Memilih poli tujuan", "label": ""}, {"id": "d1", "name": "D1 Data Pasien", "label": "tulis"}]}, "t5": {"name": "Memilih poli tujuan", "kind": "task", "lane": "Pasien", "ins": [{"id": "t4", "name": "Simpan data pasien & terbitkan No. Rekam Medis", "label": ""}, {"id": "g2", "name": "Kuota tersedia?", "label": "Tidak"}], "outs": [{"id": "t6", "name": "Cek jadwal & kuota dokter", "label": ""}]}, "t6": {"name": "Cek jadwal & kuota dokter", "kind": "task", "lane": "Sistem Antrean RS", "ins": [{"id": "t5", "name": "Memilih poli tujuan", "label": ""}, {"id": "d3", "name": "D3 Data Poli, Dokter & Jadwal", "label": "baca"}], "outs": [{"id": "g2", "name": "Kuota tersedia?", "label": ""}]}, "g2": {"name": "Kuota tersedia?", "kind": "gw", "lane": "Sistem Antrean RS", "ins": [{"id": "t6", "name": "Cek jadwal & kuota dokter", "label": ""}], "outs": [{"id": "t5", "name": "Memilih poli tujuan", "label": "Tidak"}, {"id": "t7", "name": "Buat nomor antrean", "label": "Ya"}]}, "t7": {"name": "Buat nomor antrean", "kind": "task", "lane": "Sistem Antrean RS", "ins": [{"id": "g2", "name": "Kuota tersedia?", "label": "Ya"}], "outs": [{"id": "t8", "name": "Terima tiket nomor antrean & menunggu", "label": ""}, {"id": "d2", "name": "D2 Data Antrean", "label": "tulis"}]}, "t8": {"name": "Terima tiket nomor antrean & menunggu", "kind": "task", "lane": "Pasien", "ins": [{"id": "t7", "name": "Buat nomor antrean", "label": ""}], "outs": [{"id": "t9", "name": "Memberi perintah panggil pasien", "label": ""}]}, "t9": {"name": "Memberi perintah panggil pasien", "kind": "task", "lane": "Dokter / Perawat", "ins": [{"id": "t8", "name": "Terima tiket nomor antrean & menunggu", "label": ""}], "outs": [{"id": "t10", "name": "Update status antrean, kirim notifikasi & tampilkan monitor", "label": ""}]}, "t10": {"name": "Update status antrean, kirim notifikasi & tampilkan monitor", "kind": "task", "lane": "Sistem Antrean RS", "ins": [{"id": "t9", "name": "Memberi perintah panggil pasien", "label": ""}, {"id": "d2", "name": "D2 Data Antrean", "label": "baca & update"}], "outs": [{"id": "t11", "name": "Menuju ruang periksa", "label": ""}]}, "t11": {"name": "Menuju ruang periksa", "kind": "task", "lane": "Pasien", "ins": [{"id": "t10", "name": "Update status antrean, kirim notifikasi & tampilkan monitor", "label": ""}], "outs": [{"id": "t12", "name": "Melakukan pemeriksaan", "label": ""}]}, "t12": {"name": "Melakukan pemeriksaan", "kind": "task", "lane": "Dokter / Perawat", "ins": [{"id": "t11", "name": "Menuju ruang periksa", "label": ""}], "outs": [{"id": "t13", "name": "Input hasil pemeriksaan", "label": ""}]}, "t13": {"name": "Input hasil pemeriksaan", "kind": "task", "lane": "Dokter / Perawat", "ins": [{"id": "t12", "name": "Melakukan pemeriksaan", "label": ""}], "outs": [{"id": "t14", "name": "Simpan catatan kunjungan", "label": ""}]}, "t14": {"name": "Simpan catatan kunjungan", "kind": "task", "lane": "Sistem Antrean RS", "ins": [{"id": "t13", "name": "Input hasil pemeriksaan", "label": ""}], "outs": [{"id": "e1", "name": "Pemeriksaan selesai", "label": ""}, {"id": "d4", "name": "D4 Data Kunjungan", "label": "tulis"}]}, "e1": {"name": "Pemeriksaan selesai", "kind": "end", "lane": "Sistem Antrean RS", "ins": [{"id": "t14", "name": "Simpan catatan kunjungan", "label": ""}], "outs": []}, "s2": {"name": "Ada perubahan data master", "kind": "start", "lane": "Admin Sistem", "ins": [], "outs": [{"id": "t15", "name": "Kelola data master (poli, dokter, jadwal)", "label": ""}]}, "t15": {"name": "Kelola data master (poli, dokter, jadwal)", "kind": "task", "lane": "Admin Sistem", "ins": [{"id": "s2", "name": "Ada perubahan data master", "label": ""}], "outs": [{"id": "e2", "name": "Data master tersimpan", "label": ""}, {"id": "d3", "name": "D3 Data Poli, Dokter & Jadwal", "label": "tulis"}]}, "e2": {"name": "Data master tersimpan", "kind": "end", "lane": "Admin Sistem", "ins": [{"id": "t15", "name": "Kelola data master (poli, dokter, jadwal)", "label": ""}], "outs": []}, "s3": {"name": "Butuh laporan", "kind": "start", "lane": "Admin Sistem", "ins": [], "outs": [{"id": "t16", "name": "Lihat laporan antrean & kunjungan", "label": ""}]}, "t16": {"name": "Lihat laporan antrean & kunjungan", "kind": "task", "lane": "Admin Sistem", "ins": [{"id": "s3", "name": "Butuh laporan", "label": ""}, {"id": "d4", "name": "D4 Data Kunjungan", "label": "baca"}], "outs": [{"id": "e3", "name": "Laporan diterima", "label": ""}]}, "e3": {"name": "Laporan diterima", "kind": "end", "lane": "Admin Sistem", "ins": [{"id": "t16", "name": "Lihat laporan antrean & kunjungan", "label": ""}], "outs": []}, "d1": {"name": "D1 Data Pasien", "kind": "ds", "lane": "Penyimpanan Data", "ins": [{"id": "t4", "name": "Simpan data pasien & terbitkan No. Rekam Medis", "label": "tulis"}], "outs": []}, "d3": {"name": "D3 Data Poli, Dokter & Jadwal", "kind": "ds", "lane": "Penyimpanan Data", "ins": [{"id": "t15", "name": "Kelola data master (poli, dokter, jadwal)", "label": "tulis"}], "outs": [{"id": "t6", "name": "Cek jadwal & kuota dokter", "label": "baca"}]}, "d2": {"name": "D2 Data Antrean", "kind": "ds", "lane": "Penyimpanan Data", "ins": [{"id": "t7", "name": "Buat nomor antrean", "label": "tulis"}], "outs": [{"id": "t10", "name": "Update status antrean, kirim notifikasi & tampilkan monitor", "label": "baca & update"}]}, "d4": {"name": "D4 Data Kunjungan", "kind": "ds", "lane": "Penyimpanan Data", "ins": [{"id": "t14", "name": "Simpan catatan kunjungan", "label": "tulis"}], "outs": [{"id": "t16", "name": "Lihat laporan antrean & kunjungan", "label": "baca"}]}}, "edges": {"f1": {"s": "s1", "t": "t1", "label": "", "assoc": false}, "f2": {"s": "t1", "t": "t2", "label": "", "assoc": false}, "f3": {"s": "t2", "t": "g1", "label": "", "assoc": false}, "f4": {"s": "g1", "t": "t3", "label": "Tidak", "assoc": false}, "f5": {"s": "t3", "t": "t2", "label": "", "assoc": false}, "f6": {"s": "g1", "t": "t4", "label": "Ya", "assoc": false}, "f7": {"s": "t4", "t": "t5", "label": "", "assoc": false}, "f8": {"s": "t5", "t": "t6", "label": "", "assoc": false}, "f9": {"s": "t6", "t": "g2", "label": "", "assoc": false}, "f10": {"s": "g2", "t": "t5", "label": "Tidak", "assoc": false}, "f11": {"s": "g2", "t": "t7", "label": "Ya", "assoc": false}, "f12": {"s": "t7", "t": "t8", "label": "", "assoc": false}, "f13": {"s": "t8", "t": "t9", "label": "", "assoc": false}, "f14": {"s": "t9", "t": "t10", "label": "", "assoc": false}, "f15": {"s": "t10", "t": "t11", "label": "", "assoc": false}, "f16": {"s": "t11", "t": "t12", "label": "", "assoc": false}, "f17": {"s": "t12", "t": "t13", "label": "", "assoc": false}, "f18": {"s": "t13", "t": "t14", "label": "", "assoc": false}, "f19": {"s": "t14", "t": "e1", "label": "", "assoc": false}, "f20": {"s": "s2", "t": "t15", "label": "", "assoc": false}, "f21": {"s": "t15", "t": "e2", "label": "", "assoc": false}, "f22": {"s": "s3", "t": "t16", "label": "", "assoc": false}, "f23": {"s": "t16", "t": "e3", "label": "", "assoc": false}, "a1": {"s": "t4", "t": "d1", "label": "tulis", "assoc": true}, "a2": {"s": "d3", "t": "t6", "label": "baca", "assoc": true}, "a3": {"s": "t7", "t": "d2", "label": "tulis", "assoc": true}, "a4": {"s": "d2", "t": "t10", "label": "baca & update", "assoc": true}, "a5": {"s": "t14", "t": "d4", "label": "tulis", "assoc": true}, "a6": {"s": "d4", "t": "t16", "label": "baca", "assoc": true}, "a7": {"s": "t15", "t": "d3", "label": "tulis", "assoc": true}}, "W": 2720.0, "H": 820.0};
+
+(function(){
+try{
+  const $ = s => document.querySelector(s);
+  const svg = $('#bpmn'), stage = $('#stage'), panel = $('#panel');
+  const W = DATA.W, H = DATA.H;
+  const KIND = {start:'Peristiwa awal',end:'Peristiwa akhir',task:'Aktivitas',gw:'Gateway keputusan (eksklusif)',ds:'Penyimpanan data'};
+
+  /* ---------- tautan GitHub ---------- */
+  let repo = GITHUB_REPO;
+  if(!repo && location.hostname.endsWith('.github.io')){
+    const seg = location.pathname.split('/').filter(Boolean)[0];
+    repo = location.hostname.split('.')[0] + '/' + (seg || location.hostname);
+  }
+  if(repo){
+    $('#btnGit').href = 'https://github.com/' + repo; $('#btnGit').hidden = false;
+    const raw = `https://raw.githubusercontent.com/${repo}/${GITHUB_BRANCH}/${DRAWIO_FILE}`;
+    $('#btnEdit').href = 'https://app.diagrams.net/#U' + encodeURIComponent(raw); $('#btnEdit').hidden = false;
+    $('#repoInfo').innerHTML = `Sumber: <a href="https://github.com/${repo}" target="_blank" rel="noopener">github.com/${repo}</a>`;
+  }
+
+  /* ---------- pan & zoom ---------- */
+  let s=1, tx=0, ty=0, cw=0, ch=0;
+  const MIN=.12, MAX=3.5;
+  function apply(){ svg.setAttribute('viewBox', `${tx} ${ty} ${cw/s} ${ch/s}`); }
+  function measure(){ const r=stage.getBoundingClientRect(); cw=r.width; ch=r.height; }
+  function fitHeight(){ measure(); s=Math.min(ch/H*0.98,1.2); tx=-8; ty=(H-ch/s)/2; apply(); }
+  function fitAll(){ measure(); s=Math.min(cw/W,ch/H)*0.97; tx=(W-cw/s)/2; ty=(H-ch/s)/2; apply(); }
+  function zoomAt(f,px,py){
+    const n=Math.max(MIN,Math.min(MAX,s*f)); if(n===s) return;
+    const wx=tx+px/s, wy=ty+py/s; s=n; tx=wx-px/s; ty=wy-py/s; apply();
+  }
+  const rel = e => { const r=stage.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; };
+  stage.addEventListener('wheel', e=>{ e.preventDefault(); const [x,y]=rel(e); zoomAt(Math.exp(-e.deltaY*0.0016),x,y); },{passive:false});
+  $('#zin').onclick  = ()=>zoomAt(1.3,cw/2,ch/2);
+  $('#zout').onclick = ()=>zoomAt(1/1.3,cw/2,ch/2);
+  $('#zfit').onclick = fitAll;
+  window.addEventListener('resize', ()=>{ const ocx=tx+cw/s/2, ocy=ty+ch/s/2; measure(); tx=ocx-cw/s/2; ty=ocy-ch/s/2; apply(); });
+
+  const ptrs=new Map(); let moved=false, pinch0=null, startXY=null;
+  stage.addEventListener('pointerdown', e=>{
+    if(e.target.closest('.zoom')) return;
+    ptrs.set(e.pointerId,[e.clientX,e.clientY]); moved=false; startXY=[e.clientX,e.clientY];
+    if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch0={d:Math.hypot(a[0]-b[0],a[1]-b[1]),s}; }
+  });
+  window.addEventListener('pointermove', e=>{
+    if(!ptrs.has(e.pointerId)) return;
+    const prev=ptrs.get(e.pointerId); ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+    if(ptrs.size===2 && pinch0){
+      const [a,b]=[...ptrs.values()]; const d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      const r=stage.getBoundingClientRect(); const mx=(a[0]+b[0])/2-r.left, my=(a[1]+b[1])/2-r.top;
+      zoomAt((pinch0.s*d/pinch0.d)/s,mx,my); moved=true; return;
+    }
+    if(Math.hypot(e.clientX-startXY[0],e.clientY-startXY[1])>5) moved=true;
+    if(moved){ stage.classList.add('drag'); tx-=(e.clientX-prev[0])/s; ty-=(e.clientY-prev[1])/s; apply(); }
+  });
+  const up=e=>{ ptrs.delete(e.pointerId); if(ptrs.size<2) pinch0=null; if(!ptrs.size) stage.classList.remove('drag'); };
+  window.addEventListener('pointerup',up); window.addEventListener('pointercancel',up);
+
+  /* ---------- seleksi elemen ---------- */
+  const esc = t => String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function homePanel(){
+    panel.innerHTML = `
+      <h2>Alur pasien rawat jalan</h2>
+      <p class="kind">Klik aktivitas, gateway, atau penyimpanan data untuk menyorot alurnya.</p>
+      <h3>Simbol</h3>
+      <div class="legend">
+        <svg viewBox="0 0 34 24"><circle cx="17" cy="12" r="8" fill="none" stroke="var(--start)" stroke-width="2"/></svg><span>Peristiwa awal</span>
+        <svg viewBox="0 0 34 24"><rect x="2" y="3" width="30" height="18" rx="5" fill="none" stroke="var(--accent)" stroke-width="1.6"/></svg><span>Aktivitas</span>
+        <svg viewBox="0 0 34 24"><polygon points="17,2 29,12 17,22 5,12" fill="none" stroke="var(--flow)" stroke-width="1.6"/><path d="M13,8 L21,16 M21,8 L13,16" stroke="var(--flow)" stroke-width="2"/></svg><span>Gateway keputusan (Ya / Tidak)</span>
+        <svg viewBox="0 0 34 24"><circle cx="17" cy="12" r="8" fill="none" stroke="var(--end)" stroke-width="4"/></svg><span>Peristiwa akhir</span>
+        <svg viewBox="0 0 34 24"><path d="M5,6 a12,4 0 0 1 24,0 v12 a12,4 0 0 1 -24,0 z" fill="none" stroke="var(--flow)" stroke-width="1.5"/></svg><span>Penyimpanan data</span>
+        <svg viewBox="0 0 34 24"><path d="M2,12 H32" stroke="var(--flow)" stroke-width="1.6"/></svg><span>Alur proses</span>
+        <svg viewBox="0 0 34 24"><path d="M2,12 H32" stroke="var(--flow)" stroke-width="1.3" stroke-dasharray="5 4"/></svg><span>Akses data (baca / tulis)</span>
+      </div>
+      <h3>Jalur (swimlane)</h3>
+      <div class="lanes-list">
+        <span><i style="background:var(--lane-pas)"></i>Pasien</span>
+        <span><i style="background:var(--lane-pet)"></i>Petugas Pendaftaran</span>
+        <span><i style="background:var(--lane-dok)"></i>Dokter / Perawat</span>
+        <span><i style="background:var(--lane-sis)"></i>Sistem Antrean RS</span>
+        <span><i style="background:var(--lane-dat)"></i>Penyimpanan Data</span>
+        <span><i style="background:var(--lane-adm)"></i>Admin Sistem</span>
+      </div>`;
+  }
+  const rows = (list)=> list.length ? '<ul>'+list.map(x=>`<li><button data-go="${x.id}">${x.label?`<span class="chip">${esc(x.label)}</span>`:''}${esc(x.name)}</button></li>`).join('')+'</ul>' : '<p class="kind">—</p>';
+  function select(id){
+    const m = DATA.nodes[id]; if(!m) return;
+    svg.classList.add('focus');
+    svg.querySelectorAll('.node').forEach(n=>{ n.classList.toggle('sel',n.dataset.id===id); });
+    const rel=new Set([id]); m.ins.forEach(x=>rel.add(x.id)); m.outs.forEach(x=>rel.add(x.id));
+    svg.querySelectorAll('.node').forEach(n=>n.classList.toggle('on',rel.has(n.dataset.id)));
+    svg.querySelectorAll('.edge').forEach(p=>p.classList.toggle('on',p.dataset.s===id||p.dataset.t===id));
+    panel.innerHTML = `<h2>${esc(m.name)}</h2><p class="kind">${KIND[m.kind]}</p>
+      <span class="lane-tag">${esc(m.lane)}</span>
+      <h3>Datang dari</h3>${rows(m.ins)}
+      <h3>Dilanjutkan ke</h3>${rows(m.outs)}
+      <button class="btn clear" id="clr">Hapus sorotan</button>`;
+    $('#clr').onclick=clear;
+    // geser agar elemen terlihat
+    let n; try{ n=svg.querySelector(`.node[data-id="${id}"]`).getBBox(); }catch(_){ return; }
+    const px=(n.x+n.width/2-tx)*s, py=(n.y+n.height/2-ty)*s;
+    if(px<60||px>cw-60||py<60||py>ch-60){ tx=n.x+n.width/2-cw/s/2; ty=n.y+n.height/2-ch/s/2; apply(); }
+  }
+  function clear(){ svg.classList.remove('focus'); svg.querySelectorAll('.sel,.on').forEach(n=>n.classList.remove('sel','on')); homePanel(); }
+  stage.addEventListener('click', e=>{
+    if(moved) return;
+    const n=e.target.closest('.node'); if(n) select(n.dataset.id); else if(!e.target.closest('.zoom')) clear();
+  });
+  svg.querySelectorAll('.node').forEach(n=>n.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); select(n.dataset.id);} }));
+  panel.addEventListener('click', e=>{ const b=e.target.closest('[data-go]'); if(b) select(b.dataset.go); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') clear(); });
+
+  homePanel(); fitHeight();
+}catch(err){
+  console.error(err);
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;left:12px;bottom:12px;background:#fff3cd;color:#333;padding:8px 12px;border-radius:8px;font:13px sans-serif;z-index:9';
+  d.textContent='Diagram tampil, tetapi fitur interaktif gagal dimuat: '+err.message; document.body.appendChild(d);
+}
+})();
+</script>
+</body>
+</html>
